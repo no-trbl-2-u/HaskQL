@@ -4,9 +4,12 @@
 -- -- selectAll(from "myTable")
 -- -- selectAll $ from "myTable"
 module Queries
-  ( selectAll
+  ( select
+  , selectAll
   , from
   , where_
+  , getUser
+  , getUsers
   ) where
 
 type Query = String
@@ -15,12 +18,28 @@ type Table = String
 
 type Predicate = String
 
+type ColumnField = String
+
+select :: ColumnField -> Query -> Query
+select cf = (("SELECT " ++ cf) ++)
+
 selectAll :: Query -> Query
-selectAll = ("SELECT * " ++)
+selectAll = ("SELECT *" ++)
 
 from :: Table -> Query -> Query
-from table = \n -> ("FROM " ++ table) ++ n
+from table = ((" FROM " ++ table) ++)
 
 where_ :: Predicate -> Query
 where_ predicate = " WHERE " ++ predicate
--- selectAll(from "myTable")
+
+-- Example Usage
+type Name = String
+
+getUsers :: Query
+getUsers = selectAll $ from "Users" ""
+
+getUser :: Name -> Query
+getUser name = select "username" $ from "Users" $ where_ "name = " ++ name
+-- fromMyTable $ where_ "ID < 10"
+-- selectAll . from "myTable" $ where_ "username == user"
+-- select "username" $ from "myTable" $ where_ "username === user"
