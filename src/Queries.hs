@@ -12,6 +12,8 @@ module Queries
   , getUsers
   ) where
 
+import           Data.Maybe (fromMaybe)
+
 type Query = String
 
 type Table = String
@@ -20,6 +22,10 @@ type Predicate = String
 
 type ColumnField = String
 
+(?.) :: Maybe a -> a -> a
+Just x ?. _ = x
+Nothing ?. y = y
+
 select :: ColumnField -> Query -> Query
 select cf = (("SELECT " ++ cf) ++)
 
@@ -27,7 +33,8 @@ selectAll :: Query -> Query
 selectAll = ("SELECT *" ++)
 
 from :: Table -> Query -> Query
-from table = ((" FROM " ++ table) ++)
+from table ""  = (" FROM " ++ table) ++ ""
+from table nxt = (" FROM " ++ table) ++ nxt
 
 where_ :: Predicate -> Query
 where_ predicate = " WHERE " ++ predicate
